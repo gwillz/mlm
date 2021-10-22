@@ -1,8 +1,10 @@
-import addDays from 'https://unpkg.com/date-fns/esm/addDays?module';
+import add from 'https://unpkg.com/date-fns/esm/add?module';
 import getISODay from 'https://unpkg.com/date-fns/esm/getISODay?module';
 import isWithinInterval from 'https://unpkg.com/date-fns/esm/isWithinInterval?module';
 import differenceInDays from 'https://unpkg.com/date-fns/esm/differenceInDays?module';
 import differenceInHours from 'https://unpkg.com/date-fns/esm/differenceInHours?module';
+import differenceInMinutes from 'https://unpkg.com/date-fns/esm/differenceInMinutes?module';
+import differenceInSeconds from 'https://unpkg.com/date-fns/esm/differenceInSeconds?module';
 
 (function(cb) {
    window.addEventListener('load', cb);
@@ -19,7 +21,7 @@ import differenceInHours from 'https://unpkg.com/date-fns/esm/differenceInHours?
      */
     function nextDay(dayOfWeek, from) {
         const offsetDays = 7 - getISODay(from) + dayOfWeek;
-        return addDays(from, offsetDays);
+        return add(from, { days: offsetDays });
     }
 
     /**
@@ -31,9 +33,17 @@ import differenceInHours from 'https://unpkg.com/date-fns/esm/differenceInHours?
      */
     function timeAgo(target, from) {
         const days = differenceInDays(target, from);
-        from = addDays(from, days);
+
+        from = add(from, { days });
         const hours = differenceInHours(target, from);
-        return `${days} days, ${hours} hours`;
+
+        from = add(from, { hours });
+        const minutes = differenceInMinutes(target, from);
+
+        from = add(from, { minutes });
+        const seconds = differenceInSeconds(target, from);
+
+        return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
     }
 
     /**
@@ -61,14 +71,18 @@ import differenceInHours from 'https://unpkg.com/date-fns/esm/differenceInHours?
     const $active = one('.js--active');
     $active.innerText = isActive ? 'active' : 'not active';
 
-    // Hide the countdown.
     if (isActive) {
         const $wrap = one('.js--wrap-countdown');
         $wrap.remove();
     }
-    // Show the countdown.
     else {
-        const $countdown = one('.js--countdown');
-        $countdown.innerText = timeAgo(monday.start, now);
+        function update() {
+            const now = new Date();
+            const $countdown = one('.js--countdown');
+            $countdown.innerText = timeAgo(monday.start, now);
+        }
+
+        update();
+        setInterval(update, 1000);
     }
 });
