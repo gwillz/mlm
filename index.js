@@ -43,7 +43,21 @@ import differenceInSeconds from 'https://unpkg.com/date-fns/esm/differenceInSeco
         from = add(from, { minutes });
         const seconds = differenceInSeconds(target, from);
 
-        return `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+        let out = [];
+
+        if (days > 0) {
+            out.push(`${days} days`);
+        }
+        if (hours > 0) {
+            out.push(`${hours} hours`);
+        }
+        if (minutes > 0) {
+            out.push(`${minutes} minutes`);
+        }
+
+        out.push(`${seconds} seconds`);
+
+        return out.join(', ');
     }
 
     /**
@@ -62,27 +76,28 @@ import differenceInSeconds from 'https://unpkg.com/date-fns/esm/differenceInSeco
         return { start, end };
     }
 
-    // Reference date.
-    const now = new Date();
-    const monday = getDayRange(nextDay(2, now));
-    const isActive = isWithinInterval(now, monday);
-
-    // Show active text.
     const $active = one('.js--active');
-    $active.innerText = isActive ? 'active' : 'not active';
+    const $countdown = one('.js--countdown');
+    const $mode = one('.js--mode');
 
-    if (isActive) {
-        const $wrap = one('.js--wrap-countdown');
-        $wrap.remove();
-    }
-    else {
-        function update() {
-            const now = new Date();
-            const $countdown = one('.js--countdown');
-            $countdown.innerText = timeAgo(monday.start, now);
+    function update() {
+        const now = new Date();
+        const monday = getDayRange(nextDay(2, now));
+        const isActive = isWithinInterval(now, monday);
+
+        // Show active text.
+        $active.innerText = isActive ? 'active' : 'not active';
+
+        if (isActive) {
+            $countdown.innerText = timeAgo(monday.end, now);
+            $mode.innerText = 'MLM will last for another';
         }
-
-        update();
-        setInterval(update, 1000);
+        else {
+            $countdown.innerText = timeAgo(monday.start, now);
+            $mode.innerText = 'MLM will begin in';
+        }
     }
+
+    update();
+    setInterval(update, 1000);
 });
