@@ -41,16 +41,16 @@ export function timeAgo(target, from) {
     let out = [];
 
     if (days > 0) {
-        out.push(`${days} days`);
+        out.push(tr('%d days', days));
     }
     if (hours > 0) {
-        out.push(`${hours} hours`);
+        out.push(tr('%d hours', hours));
     }
     if (minutes > 0) {
-        out.push(`${minutes} minutes`);
+        out.push(tr('%d minutes', minutes));
     }
 
-    out.push(`${seconds} seconds`);
+    out.push(tr('%d seconds', seconds));
 
     return out.join(', ');
 }
@@ -69,4 +69,29 @@ export function getDayRange(date) {
     end.setUTCHours(23, 59, 59, 0);
 
     return { start, end };
+}
+
+const PLURALS = new Intl.PluralRules(window.navigator.language);
+
+const TRANSLATIONS = {
+    '%d days': { one: '%d day', other: '%d days' },
+    '%d hours': { one: '%d hour', other: '%d hours' },
+    '%d minutes': { one: '%d minute', other: '%d minutes' },
+    '%d seconds': { one: '%d second', other: '%d seconds' },
+}
+
+/**
+ * Gettext style translation.
+ */
+export function tr(text, ...args) {
+    let index, tr;
+
+    if (
+        (tr = TRANSLATIONS[text]) &&
+        (index = args.find(arg => typeof arg === 'number')) !== undefined &&
+        (tr = tr[PLURALS.select(index)])
+     ) text = tr;
+
+     let i = 0;
+     return text.replace(/%[ds]/g, () => args[i++]);
 }

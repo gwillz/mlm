@@ -36,17 +36,17 @@ run(test => {
 
         // seconds.
         actual = timeAgo(new Date(Date.now() + SECOND), new Date());
-        expected = '1 seconds';
+        expected = '1 second';
         assert.equals(expected, actual);
 
         // minutes.
         actual = timeAgo(new Date(Date.now() + MINUTE + 35 * SECOND), new Date());
-        expected = '1 minutes, 35 seconds';
+        expected = '1 minute, 35 seconds';
         assert.equals(expected, actual);
 
         // hours.
         actual = timeAgo(new Date(Date.now() + 4 * HOUR + SECOND), new Date());
-        expected = '4 hours, 1 seconds';
+        expected = '4 hours, 1 second';
         assert.equals(expected, actual);
 
         // days.
