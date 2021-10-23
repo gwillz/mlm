@@ -13,7 +13,9 @@ import differenceInSeconds from 'https://unpkg.com/date-fns/esm/differenceInSeco
  * @returns {Date}
  */
 export function nextDay(dayOfWeek, from) {
-    const offsetDays = 7 - getISODay(from) + dayOfWeek;
+    from = new Date(+from);
+    from.setUTCHours(0, 0, 0, 0);
+    const offsetDays = (6 - getISODay(from) + dayOfWeek) % 7;
     return add(from, { days: offsetDays });
 }
 
