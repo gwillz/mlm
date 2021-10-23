@@ -4,8 +4,8 @@ export default run;
 /**
  * Execute suite on window load.
  */
-export function run(cb) {
-    const $output = document.getElementById('output');
+export function run(target, cb) {
+    const $output = document.querySelector(target);
     $output.innerText = '';
 
     // Document logger.
